@@ -11,7 +11,7 @@ import {
   HeaderMessage,
   FooterMessage,
 } from "../components/Common/WelcomeMessage";
-
+import CommonInputs from "../components/Common/CommonInputs";
 
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 
@@ -107,18 +107,24 @@ function Signup() {
             label="Username"
             placeholder="Username"
             value={username}
-            onChange={e => {
-              setUsername(e.target.value)
+            onChange={(e) => {
+              setUsername(e.target.value);
               if (regexUserName.test(e.target.value)) {
-                setUsernameAvailable(true)
+                setUsernameAvailable(true);
               } else {
-                setUsernameAvailable(false)
+                setUsernameAvailable(false);
               }
             }}
             fluid
-            icon={usernameAvailable? 'check' : 'close'}
+            icon={usernameAvailable ? "check" : "close"}
             iconPosition="left"
             required
+          />
+          <CommonInputs
+            user={user}
+            showSocialLinks={socialLinks}
+            setShowSocialLinks={setSocialLinks}
+            handleChange={handleChange}
           />
         </Segment>
       </Form>
