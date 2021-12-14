@@ -43,9 +43,16 @@ function Signup() {
   const [usernameLoading, setUsernameLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const handleSubmit = (e) => e.preventDefault();
 
+  useEffect(() => {
+    const isUser = Object.values({ name, email, password, bio }) // Here we create object with the values "name, email..."
+      .every((item) => Boolean(item)); // with EVERY method, we check if every Item in the array has value
+
+    isUser ? setSubmitDisabled(false) : setSubmitDisabled(true); // If only one Item has no value we setsetSubmitDisabled(true)
+  }, [user]);
   return (
     <div>
       <HeaderMessage />
@@ -125,6 +132,13 @@ function Signup() {
             showSocialLinks={socialLinks}
             setShowSocialLinks={setSocialLinks}
             handleChange={handleChange}
+          />
+          <Divider hidden />
+          <Button
+            content="Signup"
+            type="submit"
+            color="orange"
+            disabled={submitDisabled || !usernameAvailable}
           />
         </Segment>
       </Form>
