@@ -36,14 +36,12 @@ export const FooterMessage = () => {
       ) : (
         <>
           <Message attached="bottom" info>
-            <Icon name="lock">
-              <Link href="/reset">Forgot Password?</Link>
-            </Icon>
+            <Icon name="lock"/>
+              <Link href="/reset">Forgot Password ?</Link>
           </Message>
           <Message attached="bottom" info>
-            <Icon name="help">
+            <Icon name="help"/>
               <Link href="/signup">Signup Here</Link> Instead{" "}
-            </Icon>
           </Message>
         </>
       )}
