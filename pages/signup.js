@@ -12,6 +12,7 @@ import {
   FooterMessage,
 } from "../components/Common/WelcomeMessage";
 import CommonInputs from "../components/Common/CommonInputs";
+import ImageDropDiv from "../components/Common/ImageDropDiv";
 
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 
@@ -30,7 +31,12 @@ function Signup() {
   const { name, email, password, bio } = user;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
+
+    if (name === "media") {
+      setMedia(files[0]);
+      setMediaPreview(URL.createObjectURL(files[0]));
+    }
 
     setUser((prev) => ({ ...prev, [name]: value }));
   };
@@ -44,6 +50,11 @@ function Signup() {
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
+
+  const [media, setMedia] = useState(null);
+  const [mediaPreview, setMediaPreview] = useState(null);
+  const [highlighted, setHighlighted] = useState(false);
+  const inputRef = useRef();
 
   const handleSubmit = (e) => e.preventDefault();
 
@@ -68,6 +79,15 @@ function Signup() {
           onDismiss={() => setErrorMessage(null)}
         />
         <Segment>
+          <ImageDropDiv
+            mediaPreview={mediaPreview}
+            setMediaPreview={setMediaPreview}
+            setMedia={setMedia}
+            inputRef={inputRef}
+            highlighted={highlighted}
+            setHighlighted={setHighlighted}
+            handleChange={handleChange}
+          />
           <Form.Input
             label="Name"
             placeholder="Name"
