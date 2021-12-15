@@ -15,6 +15,8 @@ import CommonInputs from "../components/Common/CommonInputs";
 import ImageDropDiv from "../components/Common/ImageDropDiv";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
+import { registerUser } from "../utils/authUser";
+import uploadPic from "../utils/uploadPicToCloudinary";
 
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 
@@ -60,8 +62,23 @@ function Signup() {
   const [highlighted, setHighlighted] = useState(false);
   const inputRef = useRef();
 
-  const handleSubmit = (e) => e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
 
+    let profilePicUrl;
+
+    if (media !== null) {
+      profilePicUrl = await uploadPic(media);
+    }
+
+    if (media !== null && !profilePicUrl) {
+      setFormLoading(false);
+      return setErrorMessage("Error Uploading Image");
+    }
+
+    await registerUser(user, profilePicUrl, setErrorMessage, setFormLoading);
+  };
   useEffect(() => {
     const isUser = Object.values({ name, email, password, bio }) // Here we create object with the values "name, email..."
       .every((item) => Boolean(item)); // with EVERY method, we check if every Item in the array has value
@@ -73,16 +90,16 @@ function Signup() {
     setUsernameLoading(true);
 
     try {
-
       cancel && cancel();
 
-      const CancelToken = axions.CancelToken;
+      const CancelToken = axios.CancelToken;
 
       // Here we create reqeust to the Backend
       const res = await axios.get(`${baseUrl}/api/signup/${username}`, {
-        cancelToken: new CancelToken(canceler => {
+        cancelToken: new CancelToken((canceler) => {
           cancel = canceler;
-      })});
+        }),
+      });
 
       // This string comes from the Backend and must be right. (api/signup.js)
       if (res.data === "Available") {
