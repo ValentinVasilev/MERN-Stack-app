@@ -12,6 +12,10 @@ app.use(express.json()); // this is the body parser
 connectDb();
 
 nextApp.prepare().then(() => {
+  //Api routes
+  // app.use("/api/signup", require("./api/signup"));
+  // app.use("/api/auth", require("./api/auth"));
+
   app.all("*", (req, res) => handle(req, res)); // This is for Server Side Rendering - SSR. Otherwise the pages in 'pages' folder will not work.
 
   server.listen(PORT, (err) => {
