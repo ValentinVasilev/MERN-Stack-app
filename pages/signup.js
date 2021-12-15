@@ -13,8 +13,12 @@ import {
 } from "../components/Common/WelcomeMessage";
 import CommonInputs from "../components/Common/CommonInputs";
 import ImageDropDiv from "../components/Common/ImageDropDiv";
+import axios from "axios";
+import baseUrl from "../utils/baseUrl";
 
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
+
+let cancel;
 
 function Signup() {
   const [user, setUser] = useState({
@@ -64,6 +68,41 @@ function Signup() {
 
     isUser ? setSubmitDisabled(false) : setSubmitDisabled(true); // If only one Item has no value we setsetSubmitDisabled(true)
   }, [user]);
+
+  const checkUsername = async () => {
+    setUsernameLoading(true);
+
+    try {
+
+      cancel && cancel();
+
+      const CancelToken = axions.CancelToken;
+
+      // Here we create reqeust to the Backend
+      const res = await axios.get(`${baseUrl}/api/signup/${username}`, {
+        cancelToken: new CancelToken(canceler => {
+          cancel = canceler;
+      })});
+
+      // This string comes from the Backend and must be right. (api/signup.js)
+      if (res.data === "Available") {
+        setUsernameAvailable(true);
+        setUser((prev) => ({
+          ...prev,
+          username,
+        }));
+      }
+    } catch (error) {
+      setErrorMessage("Username Not Available");
+    }
+
+    setUsernameLoading(false);
+  };
+
+  useEffect(() => {
+    username === "" ? setUsernameAvailable(false) : checkUsername();
+  }, [username]);
+
   return (
     <div>
       <HeaderMessage />

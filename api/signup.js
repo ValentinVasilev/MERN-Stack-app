@@ -5,6 +5,7 @@ const router = express.Router();
 const UserModel = require("../models/UserModel");
 const FollowerModel = require("../models/FollowerModel");
 const ProfileModel = require("../models/ProfileModel");
+// const ProfileModel = require("../models/ProfileModel");
 
 const jwt = require("jsonwebtoken"); // JSON Web Token
 const bcrypt = require("bcryptjs"); // Ecnrypt the password.
@@ -18,7 +19,7 @@ const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 // Check if the Username is taken or not
 router.get("/:username", async (req, res) => {
   const { username } = req.params; // Receive the Username
-
+  console.log(req.params);
   try {
     // Check the Username length
     if (username.length < 1) return res.status(401).send("Invalid");
@@ -33,9 +34,9 @@ router.get("/:username", async (req, res) => {
     if (user) return res.status(401).send("Username already taken.");
 
     // Otherwise
-    return rest.status(200).send("Available");
+    return res.status(200).send("Available");
   } catch (error) {
-    console.log(err);
+    console.log(error);
     return res.status(500).send(`Server error`);
   }
 });
@@ -78,7 +79,7 @@ router.post("/", async (req, res) => {
       email: email.toLowerCase(),
       username: username.toLowerCase(),
       password,
-      profilePicUrl: req.body.profilePicUrl || userPng, // Check if there is a User profile picture If No, then use userPng.
+      profilePicUrl: req.body.profilePicUrl || userPng, // Check if there is a User profile picture. If there is not, then use userPng.
     });
 
     user.password = await bcrypt.hash(password, 10); // Encrypt the userpassword
