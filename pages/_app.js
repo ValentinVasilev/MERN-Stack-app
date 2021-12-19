@@ -3,12 +3,25 @@ import Layout from "../components/Layout/Layout";
 import "semantic-ui-css/semantic.min.css";
 
 class MyApp extends App {
+  static async getInitialProps(appContext) {
+    //Component is the Active page.
+    const { Component, ctx } = appContext;
+
+    let getPageProps = {};
+
+    if (Component.getInitialProps) {
+      getPageProps = await Component.getInitialProps(ctx);
+    }
+
+    return { getPageProps };
+  }
+
   render() {
-    const { Component } = this.props;
+    const { Component, getPageProps } = this.props;
 
     return (
-      <Layout>
-        <Component />
+      <Layout {...getPageProps}>
+        <Component {...getPageProps} />
       </Layout>
     );
   }

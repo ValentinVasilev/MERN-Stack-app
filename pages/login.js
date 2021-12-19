@@ -23,7 +23,6 @@ function Login() {
 
     setUser((prev) => ({ ...prev, [name]: value }));
   };
- 
 
   useEffect(() => {
     const isUser = Object.values({ email, password }) // Here we create object with the values "name, email..."
@@ -37,19 +36,19 @@ function Login() {
 
     await loginUser(user, setErrorMsg, setFormLoading);
   };
-  
+
   return (
     <div>
       <HeaderMessage />
       <Form
         loading={formLoading}
-        error={errorMessage !== null}
+        error={errorMsg !== null}
         onSubmit={handleSubmit}
       >
         <Message
           error
           header="Oops!"
-          content={errorMessage}
+          content={errorMsg}
           onDismiss={() => setErrorMessage(null)}
         />
         <Segment>
