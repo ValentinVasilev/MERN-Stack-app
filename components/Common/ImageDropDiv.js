@@ -22,6 +22,7 @@ function ImageDropDiv({
             name="media"
             ref={inputRef}
           />
+
           <div
             onDragOver={(e) => {
               e.preventDefault();
@@ -43,14 +44,18 @@ function ImageDropDiv({
           >
             {mediaPreview === null ? (
               <>
-                <Segment color={highlighted ? "green" : ""} placeholder basic>
+                <Segment
+                  {...(highlighted && { color: "green" })}
+                  placeholder
+                  basic
+                >
                   <Header icon>
                     <Icon
                       name="file image outline"
                       style={{ cursor: "pointer" }}
                       onClick={() => inputRef.current.click()}
                     />
-                    Drag and Drop or Click To Upload Image
+                    Drag n Drop or Click To Upload Image
                   </Header>
                 </Segment>
               </>

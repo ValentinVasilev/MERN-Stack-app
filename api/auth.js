@@ -10,7 +10,6 @@ const jwt = require("jsonwebtoken"); // JSON Web Token
 const bcrypt = require("bcryptjs"); // Ecnrypt the password.
 const isEmail = require("validator/lib/isEmail"); // Validate if the input Email is Valid Email address.
 
-const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 
 router.post("/", async (req, res) => {
   // Inside the Body we send the User object.

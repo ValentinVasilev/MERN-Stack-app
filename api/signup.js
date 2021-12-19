@@ -3,8 +3,8 @@ const router = express.Router();
 
 // MongoDB models
 const UserModel = require("../models/UserModel");
-const FollowerModel = require("../models/FollowerModel");
 const ProfileModel = require("../models/ProfileModel");
+const FollowerModel = require("../models/FollowerModel");
 // const ProfileModel = require("../models/ProfileModel");
 
 const jwt = require("jsonwebtoken"); // JSON Web Token
@@ -31,7 +31,7 @@ router.get("/:username", async (req, res) => {
     const user = await UserModel.findOne({ username: username.toLowerCase() });
 
     // If this Username exists
-    if (user) return res.status(401).send("Username already taken.");
+    if (user) return res.status(401).send("Username already taken");
 
     // Otherwise
     return res.status(200).send("Available");
@@ -57,7 +57,7 @@ router.post("/", async (req, res) => {
   } = req.body.user;
 
   // Check if email is valid
-  if (!isEmail(email)) return res.status(401).send("Invalid Email Address");
+  if (!isEmail(email)) return res.status(401).send("Invalid Email");
 
   // Check on password length
   if (password.length < 6) {
@@ -71,7 +71,7 @@ router.post("/", async (req, res) => {
 
     // If User with that Email exists
     if (user) {
-      return rest.status(401).send("User already registered.");
+      return res.status(401).send("User already registered");
     }
 
     user = new UserModel({
@@ -93,9 +93,9 @@ router.post("/", async (req, res) => {
     profileFields.social = {};
 
     if (facebook) profileFields.social.facebook = facebook;
+    if (youtube) profileFields.social.youtube = youtube;
     if (instagram) profileFields.social.instagram = instagram;
     if (twitter) profileFields.social.twitter = twitter;
-    if (youtube) profileFields.social.youtube = youtube;
 
     await new ProfileModel(profileFields).save(); // Create the Profile Model
 
@@ -118,7 +118,7 @@ router.post("/", async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(err);
+    console.error(error);
     return res.status(500).send(`Server error`);
   }
 });

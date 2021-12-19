@@ -1,12 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Form,
-  Button,
-  Message,
-  TextArea,
-  Divider,
-  Segment,
-} from "semantic-ui-react";
+import React, { useState, useEffect } from "react";
+import { Form, Button, Message, Segment, Divider } from "semantic-ui-react";
+import { loginUser } from "../utils/authUser";
 import {
   HeaderMessage,
   FooterMessage,
@@ -18,8 +12,9 @@ function Login() {
     password: "",
   });
 
+  const { email, password } = user;
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
@@ -28,8 +23,7 @@ function Login() {
 
     setUser((prev) => ({ ...prev, [name]: value }));
   };
-
-  const { email, password } = user;
+ 
 
   useEffect(() => {
     const isUser = Object.values({ email, password }) // Here we create object with the values "name, email..."
@@ -38,10 +32,12 @@ function Login() {
     isUser ? setSubmitDisabled(false) : setSubmitDisabled(true); // If only one Item has no value we setsetSubmitDisabled(true)
   }, [user]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  };
 
+    await loginUser(user, setErrorMsg, setFormLoading);
+  };
+  
   return (
     <div>
       <HeaderMessage />

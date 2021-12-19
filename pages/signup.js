@@ -1,25 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Form,
-  Button,
-  Message,
-  TextArea,
-  Divider,
-  Segment,
-} from "semantic-ui-react";
+import { Form, Button, Message, Segment, Divider } from "semantic-ui-react";
+import CommonInputs from "../components/Common/CommonInputs";
+import ImageDropDiv from "../components/Common/ImageDropDiv";
 import {
   HeaderMessage,
   FooterMessage,
 } from "../components/Common/WelcomeMessage";
-import CommonInputs from "../components/Common/CommonInputs";
-import ImageDropDiv from "../components/Common/ImageDropDiv";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
 import { registerUser } from "../utils/authUser";
 import uploadPic from "../utils/uploadPicToCloudinary";
-
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
-
 let cancel;
 
 function Signup() {
@@ -47,72 +38,53 @@ function Signup() {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [socialLinks, setSocialLinks] = useState(false);
+  const [showSocialLinks, setShowSocialLinks] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [formLoading, setFormLoading] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [username, setUsername] = useState("");
   const [usernameLoading, setUsernameLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
-  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [media, setMedia] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);
   const [highlighted, setHighlighted] = useState(false);
   const inputRef = useRef();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormLoading(true);
-
-    let profilePicUrl;
-
-    if (media !== null) {
-      profilePicUrl = await uploadPic(media);
-    }
-
-    if (media !== null && !profilePicUrl) {
-      setFormLoading(false);
-      return setErrorMessage("Error Uploading Image");
-    }
-
-    await registerUser(user, profilePicUrl, setErrorMessage, setFormLoading);
-  };
   useEffect(() => {
-    const isUser = Object.values({ name, email, password, bio }) // Here we create object with the values "name, email..."
-      .every((item) => Boolean(item)); // with EVERY method, we check if every Item in the array has value
-
-    isUser ? setSubmitDisabled(false) : setSubmitDisabled(true); // If only one Item has no value we setsetSubmitDisabled(true)
+    const isUser = Object.values({ name, email, password, bio }).every(
+      (
+        item // Here we create object with the values "name, email..."
+      ) => Boolean(item) // with EVERY method, we check if every Item in the array has value
+    );
+    isUser ? setSubmitDisabled(false) : setSubmitDisabled(true);
   }, [user]);
 
   const checkUsername = async () => {
     setUsernameLoading(true);
-
     try {
       cancel && cancel();
 
       const CancelToken = axios.CancelToken;
 
-      // Here we create reqeust to the Backend
       const res = await axios.get(`${baseUrl}/api/signup/${username}`, {
         cancelToken: new CancelToken((canceler) => {
           cancel = canceler;
         }),
       });
 
-      // This string comes from the Backend and must be right. (api/signup.js)
+      if (errorMsg !== null) setErrorMsg(null);
+
       if (res.data === "Available") {
         setUsernameAvailable(true);
-        setUser((prev) => ({
-          ...prev,
-          username,
-        }));
+        setUser((prev) => ({ ...prev, username }));
       }
     } catch (error) {
-      setErrorMessage("Username Not Available");
+      setErrorMsg("Username Not Available");
+      setUsernameAvailable(false);
     }
-
     setUsernameLoading(false);
   };
 
@@ -120,20 +92,38 @@ function Signup() {
     username === "" ? setUsernameAvailable(false) : checkUsername();
   }, [username]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
+
+    let profilePicUrl;
+    if (media !== null) {
+      profilePicUrl = await uploadPic(media);
+    }
+
+    if (media !== null && !profilePicUrl) {
+      setFormLoading(false);
+      return setErrorMsg("Error Uploading Image");
+    }
+
+    await registerUser(user, profilePicUrl, setErrorMsg, setFormLoading);
+  };
+
   return (
-    <div>
+    <>
       <HeaderMessage />
       <Form
         loading={formLoading}
-        error={errorMessage !== null}
+        error={errorMsg !== null}
         onSubmit={handleSubmit}
       >
         <Message
           error
           header="Oops!"
-          content={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
+          content={errorMsg}
+          onDismiss={() => setErrorMsg(null)}
         />
+
         <Segment>
           <ImageDropDiv
             mediaPreview={mediaPreview}
@@ -145,6 +135,7 @@ function Signup() {
             handleChange={handleChange}
           />
           <Form.Input
+            required
             label="Name"
             placeholder="Name"
             name="name"
@@ -153,9 +144,10 @@ function Signup() {
             fluid
             icon="user"
             iconPosition="left"
-            required
           />
+
           <Form.Input
+            required
             label="Email"
             placeholder="Email"
             name="email"
@@ -165,8 +157,8 @@ function Signup() {
             icon="envelope"
             iconPosition="left"
             type="email"
-            required
           />
+
           <Form.Input
             label="Password"
             placeholder="Password"
@@ -184,9 +176,11 @@ function Signup() {
             type={showPassword ? "text" : "password"}
             required
           />
+
           <Form.Input
             loading={usernameLoading}
             error={!usernameAvailable}
+            required
             label="Username"
             placeholder="Username"
             value={username}
@@ -201,14 +195,15 @@ function Signup() {
             fluid
             icon={usernameAvailable ? "check" : "close"}
             iconPosition="left"
-            required
           />
+
           <CommonInputs
             user={user}
-            showSocialLinks={socialLinks}
-            setShowSocialLinks={setSocialLinks}
+            showSocialLinks={showSocialLinks}
+            setShowSocialLinks={setShowSocialLinks}
             handleChange={handleChange}
           />
+
           <Divider hidden />
           <Button
             icon="signup"
@@ -219,8 +214,9 @@ function Signup() {
           />
         </Segment>
       </Form>
+
       <FooterMessage />
-    </div>
+    </>
   );
 }
 
