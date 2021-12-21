@@ -1,11 +1,12 @@
 import React from "react";
 import { Menu, Container, Icon } from "semantic-ui-react";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 function Navbar() {
   const router = useRouter();
-  const isActive = (route) => router.pathname === route;
+
+  const isActive = route => router.pathname === route;
 
   return (
     <Menu fluid borderless>
@@ -16,6 +17,7 @@ function Navbar() {
             Login
           </Menu.Item>
         </Link>
+
         <Link href="/signup">
           <Menu.Item header active={isActive("/signup")}>
             <Icon size="large" name="signup" />

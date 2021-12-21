@@ -11,7 +11,6 @@
     "@artsy/fresnel": "^1.2.2",
     "axios": "^0.21.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.1",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -27,7 +26,7 @@
     "nprogress": "^0.2.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-infinite-scroll-component": "6.0.0",
+    "react-infinite-scroll-component": "^5.1.0",
     "react-moment": "^0.9.7",
     "react-toastify": "^6.0.5",
     "semantic-ui-css": "^2.4.1",
@@ -36,9 +35,5 @@
     "socket.io-client": "^2.3.0",
     "uuid": "^8.2.0",
     "validator": "^13.0.0"
-  },
-  "main": "index.js",
-  "repository": "https://github.com/ValentinVasilev/MERN-Stack-React-Udemy-Course.git",
-  "author": "ValentinVasilev <falioVasilev@gmail.com>",
-  "license": "MIT"
+  }
 }

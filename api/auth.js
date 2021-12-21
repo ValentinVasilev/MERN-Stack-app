@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const UserModel = require("../models/UserModel");
-const FollowerModel = require("../models/FollowerModel");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const isEmail = require("validator/lib/isEmail");
+const jwt = require("jsonwebtoken"); // JSON Web Token
+const bcrypt = require("bcryptjs"); // Ecnrypt the password.
+const isEmail = require("validator/lib/isEmail"); // Validate if the input Email is Valid Email address.
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Get request to get User detaisl
+// MongoDB models
+const FollowerModel = require("../models/FollowerModel");
+const UserModel = require("../models/UserModel");
 
+// Get request to get User detaisl
 router.get("/", authMiddleware, async (req, res) => {
   const { userId } = req;
 

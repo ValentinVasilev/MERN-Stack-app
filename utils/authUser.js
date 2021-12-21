@@ -4,17 +4,9 @@ import catchErrors from "./catchErrors";
 import Router from "next/router";
 import cookie from "js-cookie";
 
-export const registerUser = async (
-  user,
-  profilePicUrl,
-  setError,
-  setLoading
-) => {
+export const registerUser = async (user, profilePicUrl, setError, setLoading) => {
   try {
-    const res = await axios.post(`${baseUrl}/api/signup`, {
-      user,
-      profilePicUrl,
-    });
+    const res = await axios.post(`${baseUrl}/api/signup`, { user, profilePicUrl });
 
     setToken(res.data);
   } catch (error) {
@@ -46,12 +38,12 @@ export const redirectUser = (ctx, location) => {
   }
 };
 
-const setToken = (token) => {
+const setToken = token => {
   cookie.set("token", token);
   Router.push("/");
 };
 
-export const logoutUser = (email) => {
+export const logoutUser = email => {
   cookie.set("userEmail", email);
   cookie.remove("token");
   Router.push("/login");

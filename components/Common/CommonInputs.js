@@ -5,7 +5,7 @@ function CommonInputs({
   user: { bio, facebook, instagram, youtube, twitter },
   handleChange,
   showSocialLinks,
-  setShowSocialLinks,
+  setShowSocialLinks
 }) {
   return (
     <>
@@ -72,4 +72,5 @@ function CommonInputs({
     </>
   );
 }
+
 export default CommonInputs;

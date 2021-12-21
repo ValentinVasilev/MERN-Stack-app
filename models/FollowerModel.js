@@ -6,15 +6,15 @@ const FollowerSchema = new Schema({
 
   followers: [
     {
-      user: { type: Schema.Types.ObjectId, ref: "User" },
-    },
+      user: { type: Schema.Types.ObjectId, ref: "User" }
+    }
   ],
 
   following: [
     {
-      user: { type: Schema.Types.ObjectId, ref: "User" },
-    },
-  ],
+      user: { type: Schema.Types.ObjectId, ref: "User" }
+    }
+  ]
 });
 
 module.exports = mongoose.model("Follower", FollowerSchema);

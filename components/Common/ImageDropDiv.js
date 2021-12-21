@@ -8,7 +8,7 @@ function ImageDropDiv({
   handleChange,
   mediaPreview,
   setMediaPreview,
-  setMedia,
+  setMedia
 }) {
   return (
     <>
@@ -24,31 +24,26 @@ function ImageDropDiv({
           />
 
           <div
-            onDragOver={(e) => {
+            onDragOver={e => {
               e.preventDefault();
               setHighlighted(true);
             }}
-            onDragLeave={(e) => {
+            onDragLeave={e => {
               e.preventDefault();
               setHighlighted(false);
             }}
-            onDrop={(e) => {
+            onDrop={e => {
               e.preventDefault();
               setHighlighted(true);
 
-              const droppedFile = Array.from(e.dataTransfer.files); // Get dropped files
-              setMedia(droppedFile[0]); // Get the first image that user Droppded and asign it to SetMedia
-              setMediaPreview(URL.createObjectURL(droppedFile[0])); // Create a preview from the file that user dropped.
-              console.log(e.dataTransfer.files);
-            }}
-          >
+              // Get the first image that user Droppded and asign it to SetMedia
+              const droppedFile = Array.from(e.dataTransfer.files);
+              setMedia(droppedFile[0]);
+              setMediaPreview(URL.createObjectURL(droppedFile[0]));
+            }}>
             {mediaPreview === null ? (
               <>
-                <Segment
-                  {...(highlighted && { color: "green" })}
-                  placeholder
-                  basic
-                >
+                <Segment color={highlighted ? "green" : ""} placeholder basic>
                   <Header icon>
                     <Icon
                       name="file image outline"

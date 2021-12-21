@@ -12,9 +12,7 @@ export const HeaderMessage = () => {
       attached
       header={signupRoute ? "Get Started" : "Welcome Back"}
       icon={signupRoute ? "settings" : "privacy"}
-      content={
-        signupRoute ? "Create New Account" : "Login with Email and Password"
-      }
+      content={signupRoute ? "Create New Account" : "Login with Email and Password"}
     />
   );
 };

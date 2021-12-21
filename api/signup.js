@@ -1,25 +1,22 @@
 const express = require("express");
 const router = express.Router();
-
-// MongoDB models
 const UserModel = require("../models/UserModel");
 const ProfileModel = require("../models/ProfileModel");
 const FollowerModel = require("../models/FollowerModel");
-// const ProfileModel = require("../models/ProfileModel");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const isEmail = require("validator/lib/isEmail");
 
-const jwt = require("jsonwebtoken"); // JSON Web Token
-const bcrypt = require("bcryptjs"); // Ecnrypt the password.
-const isEmail = require("validator/lib/isEmail"); // Validate if the input Email is Valid Email address.
-
+// This Profile picture will be used if the User didnot uploaded any
 const userPng =
-  "https://res.cloudinary.com/indersingh/image/upload/v1593464618/App/user_mklcpl.png"; // This Profile picture will be used if the User didnot uploaded any
+  "https://res.cloudinary.com/indersingh/image/upload/v1593464618/App/user_mklcpl.png";
 
 const regexUserName = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 
 // Check if the Username is taken or not
 router.get("/:username", async (req, res) => {
   const { username } = req.params; // Receive the Username
-  console.log(req.params);
+
   try {
     // Check the Username length
     if (username.length < 1) return res.status(401).send("Invalid");
@@ -33,10 +30,9 @@ router.get("/:username", async (req, res) => {
     // If this Username exists
     if (user) return res.status(401).send("Username already taken");
 
-    // Otherwise
     return res.status(200).send("Available");
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).send(`Server error`);
   }
 });
@@ -83,7 +79,7 @@ router.post("/", async (req, res) => {
     });
 
     user.password = await bcrypt.hash(password, 10); // Encrypt the userpassword
-    await user.save(); // Save the User object.
+    await user.save();
 
     let profileFields = {};
     profileFields.user = user._id; // Here we reference this Profile model with User Id
@@ -91,22 +87,18 @@ router.post("/", async (req, res) => {
     profileFields.bio = bio;
 
     profileFields.social = {};
-
     if (facebook) profileFields.social.facebook = facebook;
     if (youtube) profileFields.social.youtube = youtube;
     if (instagram) profileFields.social.instagram = instagram;
     if (twitter) profileFields.social.twitter = twitter;
 
-    await new ProfileModel(profileFields).save(); // Create the Profile Model
-
-    // Create Follower Model
+    await new ProfileModel(profileFields).save();
     await new FollowerModel({
       user: user._id,
       followers: [],
       following: [],
     }).save();
 
-    // Here we send the Token to the Frond End
     const payload = { userId: user._id };
     jwt.sign(
       payload,
