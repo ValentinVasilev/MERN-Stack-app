@@ -84,7 +84,10 @@ router.get("/followers/:userId", authMiddleware, async (req, res) => {
     );
 
     return res.json(user.followers);
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server Error");
+  }
 });
 
 // GET FOLLOWING
@@ -99,7 +102,10 @@ router.get("/following/:userId", authMiddleware, async (req, res) => {
     );
 
     return res.json(user.following);
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server Error");
+  }
 });
 
 // FOLLOW A USER
@@ -139,7 +145,10 @@ router.post("/follow/:userToFollowId", authMiddleware, async (req, res) => {
     await userToFollow.save();
 
     return res.status(200).send("Success!");
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server Error");
+  }
 });
 
 //UNFOLLOW A USER
@@ -185,7 +194,47 @@ router.put("/unfollow/:userToUnfollowId", authMiddleware, async (req, res) => {
     await userToUnfollow.save();
 
     return res.status(200).send("Success");
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server Error");
+  }
 });
 
+// UPDATE PROFILE
+
+router.post("/update", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req;
+    const { bio, facebook, youtube, twitter, instagram, profilePicUrl } =
+      req.body;
+
+    let profileFields = {};
+    profileFields.user = userId;
+
+    profileFields.bio = bio;
+
+    profileFields.social = {};
+    if (facebook) profileFields.social.facebook = facebook;
+    if (youtube) profileFields.social.youtube = youtube;
+    if (instagram) profileFields.social.instagram = instagram;
+    if (twitter) profileFields.social.twitter = twitter;
+
+    await ProfileModel.findByIdAndUpdate(
+      { user: userId },
+      { $set: profileFields }, // Here we set the data
+      { new: true } // This means Only the New Data will be shown to us.
+    );
+
+    if (profilePicUrl) {
+      const user = await UserModel.findById(userId);
+      user.profilePicUrl = profilePicUrl;
+      await user.save();
+    }
+
+    return res.status(200).send("Success");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server error");
+  }
+});
 module.exports = router;
