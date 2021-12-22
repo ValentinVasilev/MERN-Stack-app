@@ -5,6 +5,7 @@ const UserModel = require("../models/UserModel");
 const ProfileModel = require("../models/ProfileModel");
 const FollowerModel = require("../models/FollowerModel");
 const PostModel = require("../models/PostModel");
+const bcrypt = require("bcryptjs");
 
 //GET PROFILE INFO
 // The base route is "/api/profile"
@@ -237,4 +238,51 @@ router.post("/update", authMiddleware, async (req, res) => {
   }
 });
 
+// UPDATE PASSWORD
+
+router.post("/settings/password", authMiddleware, async (req, res) => {
+  try {
+    const { curnetPassword, newPassword } = req.body;
+
+    if (newPassword.length < 6) {
+      return res.status(401).send("Password must be atleast 6 characters");
+    }
+
+    const user = await UserModel.findById(req.userId).select("+password");
+
+    const isPassword = await bcrypt.compare(currentPassword, user.password);
+
+    //This means password is not correct
+    if (!isPassword) {
+      return res.status(401).send("Invalid password");
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server error");
+  }
+});
+
+// UPDATE MESSAGE POPUP SETTINGS
+
+router.post("/settings/messagePopup", authMiddleware, async (req, res) => {
+  const user = await UserModel.findById(req.userId);
+
+  try {
+    if (user.newMessagePopup) {
+      user.newMessagePopup = false;
+      await user.save();
+    } else {
+      user.newMessagePopup = true;
+      await user.save();
+    }
+
+    return res.status(200).send("Success");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Server error");
+  }
+});
 module.exports = router;
