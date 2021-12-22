@@ -12,10 +12,12 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 nextApp.prepare().then(() => {
+  //Api Routes
   app.use("/api/signup", require("./api/signup"));
   app.use("/api/auth", require("./api/auth"));
   app.use("/api/search", require("./api/search"));
   app.use("/api/posts", require("./api/posts"));
+  app.use("/api/profile", require("./api/profile"));
 
   app.all("*", (req, res) => handle(req, res)); // This is for Server Side Rendering - SSR. Otherwise the pages in 'pages' folder will not work.
 
