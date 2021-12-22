@@ -30,18 +30,17 @@ router.get(`/:username`, authMiddleware, async (req, res) => {
     const profileFollowStats = await FollowerModel.findOne({ user: user._id });
 
     return res.json({
-      user,
       profile,
 
-      // followersLength:
-      //   profileFollowStats.followers.length > 0
-      //     ? profileFollowStats.followers.length
-      //     : 0,
+      followersLength:
+        profileFollowStats.followers.length > 0
+          ? profileFollowStats.followers.length
+          : 0,
 
-      // followingLength:
-      //   profileFollowStats.following.length > 0
-      //     ? profileFollowStats.following.length
-      //     : 0,
+      followingLength:
+        profileFollowStats.following.length > 0
+          ? profileFollowStats.following.length
+          : 0,
     });
   } catch (error) {
     console.log(error);
@@ -237,4 +236,5 @@ router.post("/update", authMiddleware, async (req, res) => {
     return res.status(500).send("Server error");
   }
 });
+
 module.exports = router;
