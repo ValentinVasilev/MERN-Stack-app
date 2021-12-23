@@ -12,17 +12,20 @@ class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     // Check if there is a token
     const { token } = parseCookies(ctx);
+
     let pageProps = {};
 
-    const protectedRoutes = ctx.pathname === "/";
+    // Those Are protected Routes
+    const protectedRoutes =
+      ctx.pathname === "/" ||
+      ctx.pathname === "/[username]" ||
+      ctx.pathname === "/post/[postid]";
 
     // If there is no User, that means the User is not loggedin.
     if (!token) {
       // If the User tries to navigate to protect routes and he is not Sinedin, we redirect him to Home page
       protectedRoutes && redirectUser(ctx, "/login");
-    }
-    
-    else {
+    } else {
       if (Component.getInitialProps) {
         pageProps = await Component.getInitialProps(ctx);
       }
