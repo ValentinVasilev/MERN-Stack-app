@@ -23,7 +23,7 @@ class MyApp extends App {
 
     // If there is no User, that means the User is not loggedin.
     if (!token) {
-      // If the User tries to navigate to protect routes and he is not Sinedin, we redirect him to Home page
+      // If the User tries to navigate to protect routes and he is not Signedin, we redirect him to Home page
       protectedRoutes && redirectUser(ctx, "/login");
     } else {
       if (Component.getInitialProps) {
@@ -39,8 +39,8 @@ class MyApp extends App {
 
         if (user) !protectedRoutes && redirectUser(ctx, "/");
 
-        pageProps.user = user;
-        pageProps.userFollowStats = userFollowStats;
+         pageProps.user = user;
+         pageProps.userFollowStats = userFollowStats;
       } catch (error) {
         destroyCookie(ctx, "token");
         redirectUser(ctx, "/login");
