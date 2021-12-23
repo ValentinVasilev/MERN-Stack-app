@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
+import { NoProfilePosts, NoProfile } from "../components/Layout/NoData";
+import { Grid } from "semantic-ui-react";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
-import { parseCookies } from "nookies";
-import { NoProfile } from "../components/Layout/NoData";
 import cookie from "js-cookie";
-import { Grid } from "semantic-ui-react";
 import ProfileMenuTabs from "../components/Profile/ProfileMenuTabs";
+import ProfileHeader from "../components/Profile/ProfileHeader";
+import CardPost from "../components/Post/CardPost";
+import { PlaceHolderPosts } from "../components/Layout/PlaceHolderGroup";
+import { PostDeleteToastr } from "../components/Layout/Toastr";
 
 function ProfilePage({
   profile,
@@ -23,6 +27,9 @@ function ProfilePage({
   // This will track the active item from the Tab Menu ('Profile', 'Followers', 'Following', etc..)
   const [activeItem, setActiveItem] = useState("profile");
 
+  const [showToastr, setShowToastr] = useState(false);
+
+
   // This will be when User clicks on the tabs to render a different component depending on the Active item.
   const handleItemClick = (item) => setActiveItem(item);
 
@@ -38,26 +45,34 @@ function ProfilePage({
   useEffect(() => {
     const getPosts = async () => {
       setLoading(true);
+
       try {
         const { username } = router.query;
-        const token = cookie.get(token);
-
         const res = await axios.get(
           `${baseUrl}/api/profile/posts/${username}`,
-          { headers: { Authorization: token } }
+          {
+            headers: { Authorization: cookie.get("token") },
+          }
         );
 
         setPosts(res.data);
       } catch (error) {
         alert("Error Loading Posts");
+        console.log(error);
       }
+
       setLoading(false);
     };
     getPosts();
-  }, []);
+  }, [router.query.username]);
+
+    useEffect(() => {
+      showToastr && setTimeout(() => setShowToastr(false), 4000);
+    }, [showToastr]);
 
   return (
     <>
+      {showToastr && <PostDeleteToastr />}
       <Grid stackable>
         <Grid.Row>
           <Grid.Column>
@@ -69,6 +84,37 @@ function ProfilePage({
               ownAccount={ownAccount}
               loggedUserFollowStats={loggedUserFollowStats}
             />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            {/* Here we check if Profile is opend */}
+            {activeItem === "profile" && (
+              <>
+                <ProfileHeader
+                  profile={profile}
+                  ownAccount={ownAccount}
+                  loggedUserFollowStats={loggedUserFollowStats}
+                  setUserFollowStats={setUserFollowStats}
+                />
+
+                {loading ? (
+                  <PlaceHolderPosts />
+                ) : posts.length > 0 ? (
+                  posts.map((post) => (
+                    <CardPost
+                      key={post._id}
+                      post={post}
+                      user={user}
+                      setPosts={setPosts}
+                      setShowToastr={setShowToastr}
+                    />
+                  ))
+                ) : (
+                  <NoProfilePosts />
+                )}
+              </>
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
