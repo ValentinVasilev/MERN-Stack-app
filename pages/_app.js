@@ -17,9 +17,7 @@ class MyApp extends App {
 
     // Those Are protected Routes
     const protectedRoutes =
-      ctx.pathname === "/" ||
-      ctx.pathname === "/[username]" ||
-      ctx.pathname === "/post/[postid]";
+      ctx.pathname === "/" || ctx.pathname === "/[username]";
 
     // If there is no User, that means the User is not loggedin.
     if (!token) {
@@ -39,8 +37,8 @@ class MyApp extends App {
 
         if (user) !protectedRoutes && redirectUser(ctx, "/");
 
-         pageProps.user = user;
-         pageProps.userFollowStats = userFollowStats;
+        pageProps.user = user;
+        pageProps.userFollowStats = userFollowStats;
       } catch (error) {
         destroyCookie(ctx, "token");
         redirectUser(ctx, "/login");
@@ -60,5 +58,4 @@ class MyApp extends App {
     );
   }
 }
-
 export default MyApp;

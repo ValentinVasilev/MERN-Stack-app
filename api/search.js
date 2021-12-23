@@ -12,7 +12,7 @@ router.get("/:searchText", authMiddleware, async (req, res) => {
     let userPattern = new RegExp(`^${searchText}`);
 
     const results = await UserModel.find({
-      name: { $regex: userPattern, $options: "i" }
+      name: { $regex: userPattern, $options: "i" },
     });
 
     return res.status(200).json(results);

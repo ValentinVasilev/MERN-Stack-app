@@ -16,11 +16,6 @@ function SearchComponent() {
     setText(value);
     setLoading(true);
 
-    if (value.length === 0) return;
-
-    //trim will remove white spaces.
-    if (value.trim().length === 0) return;
-    
     try {
       cancel && cancel();
       const CancelToken = axios.CancelToken;
@@ -37,7 +32,7 @@ function SearchComponent() {
 
       setResults(res.data);
     } catch (error) {
-      console.log("Error Searching");
+      alert("Error Searching");
     }
 
     setLoading(false);
