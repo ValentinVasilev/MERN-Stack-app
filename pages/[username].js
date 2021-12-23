@@ -11,6 +11,7 @@ import ProfileHeader from "../components/Profile/ProfileHeader";
 import CardPost from "../components/Post/CardPost";
 import { PlaceHolderPosts } from "../components/Layout/PlaceHolderGroup";
 import { PostDeleteToastr } from "../components/Layout/Toastr";
+import Followers from "../components/Profile/Followers";
 
 function ProfilePage({
   profile,
@@ -114,6 +115,15 @@ function ProfilePage({
                   <NoProfilePosts />
                 )}
               </>
+            )}
+
+            {activeItem === "followers" && (
+              <Followers
+                user={user}
+                loggedUserFollowStats={loggedUserFollowStats}
+                setUserFollowStats={setUserFollowStats}
+                profileUserId={profile.user._id}
+              />
             )}
           </Grid.Column>
         </Grid.Row>
